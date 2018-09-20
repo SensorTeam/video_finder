@@ -14,25 +14,28 @@ def extract_data_from(image):
 	cnts, thresh = detect_bright_spots(image)
 	# show_thresh(thresh)
 	contours = circle_filter(cnts)
-	circled = circle_contours(contours,image)
+	circled, rects = circle_contours(contours,image)
 	# show_contours(contours, image)
 
-	return circled
+	return circled, rects
 	
 
 # returns image with contours circled
 def circle_contours(cnts, image):
+	rects = []
 	# loop over the contours
 	for (i, c) in enumerate(cnts):
 		# draw the bright spot on the image
 		(x, y, w, h) = cv2.boundingRect(c)
+		rect = (x, y, x + w, y - h)
+		rects.append(rect)
 		((cX, cY), radius) = cv2.minEnclosingCircle(c)
 		cv2.circle(image, (int(cX), int(cY)), int(radius)+4,
 			(0, 0, 255), 2)
 
 	# show the output image
 	image = cv2.resize(image, (954, 634))
-	return image
+	return image, rects
 
 
 # # Run main on one image
